@@ -45,3 +45,21 @@ jobs:
           SHA=${GITHUB_SHA::7}
           docker push "${{ env.IMAGE_REPO }}:${SHA}"
           docker push "${{ env.IMAGE_REPO }}:latest"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_SSH_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
+            docker pull ${{ secrets.DOCKER_USERNAME }}/relay:${{ github.sha }}
+            docker stop relay || true
+            docker rm relay || true
+            docker run -d -p 7000:7000 --name relay ${{ secrets.DOCKER_USERNAME }}/relay:${{ github.sha }}
