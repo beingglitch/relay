@@ -59,10 +59,11 @@ jobs:
           username: ${{ secrets.EC2_SSH_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+            # SHA=$(echo "${{ github.sha }}" | cut -c1-7)
             
             docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
-            docker pull ${{ secrets.DOCKER_USERNAME }}/relay:${SHA}
+            # docker pull ${{ secrets.DOCKER_USERNAME }}/relay:${SHA}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/relay:$latest
             docker stop relay || true
             docker rm relay || true
-            docker run -d -p 7000:7000 --name relay ${{ secrets.DOCKER_USERNAME }}/relay:${SHA}
+            docker run -d -p 7000:7000 --name relay ${{ secrets.DOCKER_USERNAME }}/relay:latest

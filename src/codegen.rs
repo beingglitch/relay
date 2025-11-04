@@ -15,7 +15,7 @@ pub fn make_code(len: usize) -> String {
 
         *b = ALPHABET[i];
     }
-
+    
     String::from_utf8(buf).expect("ascii only")
 }
 
