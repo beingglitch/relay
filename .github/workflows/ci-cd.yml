@@ -62,7 +62,7 @@ jobs:
             SHA=$(echo "${{ github.sha }}" | cut -c1-7)
             
             docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
-            docker pull ${{ secrets.DOCKER_USERNAME }}/relay:${{ github.sha }}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/relay:${SHA}
             docker stop relay || true
             docker rm relay || true
-            docker run -d -p 7000:7000 --name relay ${{ secrets.DOCKER_USERNAME }}/relay:${{ github.sha }}
+            docker run -d -p 7000:7000 --name relay ${{ secrets.DOCKER_USERNAME }}/relay:${SHA}
